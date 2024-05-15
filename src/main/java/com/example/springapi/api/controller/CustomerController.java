@@ -1,7 +1,7 @@
 package com.example.springapi.api.controller;
 
-import com.example.springapi.api.dto.UserDTO;
-import com.example.springapi.service.UserService;
+import com.example.springapi.api.dto.CustomerDTO;
+import com.example.springapi.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,56 +11,55 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class UserController {
+public class CustomerController {
 
-    private final UserService userService;
+    private final CustomerService customerService;
 
     @Autowired
-    public UserController(UserService userService){
-        this.userService = userService;
+    public CustomerController(CustomerService customerService){
+        this.customerService = customerService;
     }
 
     @GetMapping("/customers/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable int id){
-        Optional<UserDTO> user = userService.getUser(id);
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable int id){
+        Optional<CustomerDTO> customer = customerService.getCustomer(id);
 
-        return user.map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
+        return customer.map(customerDTO -> new ResponseEntity<>(customerDTO, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/customers")
-    public ResponseEntity<List<UserDTO>> getUsers(){
-        List<UserDTO> users = userService.getUsers();
+    public ResponseEntity<List<CustomerDTO>> getCustomers(){
+        List<CustomerDTO> customers = customerService.getCustomers();
 
-        if (!users.isEmpty()) {
-            return new ResponseEntity<>(users, HttpStatus.OK);
+        if (!customers.isEmpty()) {
+            return new ResponseEntity<>(customers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/customers")
-    public ResponseEntity<Void> postUser(@RequestBody UserDTO userDTO) {
-        userService.postUser(userDTO);
+    public ResponseEntity<Void> postCustomer(@RequestBody CustomerDTO customerDTO) {
+        customerService.postCustomer(customerDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/customers/{id}")
-    public ResponseEntity<Void> putUser(@PathVariable int id, @RequestBody UserDTO userDTO) {
-        userService.putUser(id, userDTO);
+    public ResponseEntity<Void> putCustomer(@PathVariable int id, @RequestBody CustomerDTO customerDTO) {
+        customerService.putCustomer(id, customerDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/customers/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
+        customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
