@@ -22,3 +22,10 @@ docker build . -t ptk_customers_service
 docker run -d -p 8081:8080 --name ptk_customers_backend --network my_network ptk_customers_service
 
 ```
+
+### Access To RabbitMq
+``` 
+http://localhost:15672/
+user : guest
+password : guest
+```

@@ -25,8 +25,8 @@ public class CustomerController {
     }
 
     @GetMapping("/publish")
-    public ResponseEntity<String> sendMessage(){
-        producer.sendMessage("test");
+    public ResponseEntity<String> sendMessage(@RequestParam("message") String message){
+        producer.sendMessage(message);
         return ResponseEntity.ok("Message sent to RabbitMQ ...");
     }
 
