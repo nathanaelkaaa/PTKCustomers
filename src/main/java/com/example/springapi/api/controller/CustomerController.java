@@ -1,8 +1,10 @@
 package com.example.springapi.api.controller;
 
 import com.example.springapi.api.dto.CustomerDTO;
+import com.example.springapi.api.dto.OrderDTO;
 import com.example.springapi.publisher.RabbitMQProducer;
 import com.example.springapi.service.CustomerService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,17 @@ public class CustomerController {
 
         return customer.map(customerDTO -> new ResponseEntity<>(customerDTO, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDTO>> getOrders(@RequestParam int id) throws JsonProcessingException {
+        List<OrderDTO> orders = customerService.getMyOrders(id);
+
+        if (!orders.isEmpty()) {
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping

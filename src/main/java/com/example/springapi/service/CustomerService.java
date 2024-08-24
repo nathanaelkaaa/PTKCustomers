@@ -1,8 +1,13 @@
 package com.example.springapi.service;
 
 import com.example.springapi.api.dto.CustomerDTO;
+import com.example.springapi.api.dto.OrderDTO;
 import com.example.springapi.persistence.entity.CustomerEntity;
 import com.example.springapi.persistence.repository.CustomerRepository;
+import com.example.springapi.publisher.RabbitMQProducer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +19,14 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private RabbitMQProducer producer;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, RabbitMQProducer producer) {
         this.customerRepository = customerRepository;
+        this.producer = producer;
     }
 
     public Optional<CustomerDTO> getCustomer(Integer id) {
@@ -67,5 +76,16 @@ public class CustomerService {
         // Implémentez la logique pour générer un identifiant unique, par exemple en utilisant un compteur ou une méthode de génération d'identifiant unique
         // Pour cet exemple, vous pouvez simplement utiliser un identifiant incrémental
         return Math.toIntExact(customerRepository.count() + 1);
+    }
+
+    public List<OrderDTO> getMyOrders(int id) throws JsonProcessingException {
+        String reply = producer.sendMessageWithReturn("ACTION_GET_MY_ORDERS:"+id);
+        if (reply == "No reply received"){
+            return null;
+        }
+        System.out.println("ERREURRRRRRRRRRRRR+++++++++++++++++++++++++");
+        List<OrderDTO> orderDTO = objectMapper.readValue(reply, new TypeReference<List<OrderDTO>>(){});
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+        return orderDTO;
     }
 }
